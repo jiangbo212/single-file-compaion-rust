@@ -1,0 +1,20 @@
+[package]
+name = "single_file_companion_rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = {version = "1", features = ["serde_derive"]}
+serde_json = {version = "1"}
+rust-s3 = "0.34.0-rc4"
+tokio = {version = "1", features = ["rt-multi-thread","macros"]}
+log4rs = {version = "1.2.0", default-features = false, features = ["yaml_format", "config_parsing", "file_appender"]}
+log = "0.4.20"
+dotenv = "0.15.0"
+chrono = "0.4.31"
+
+[profile.release]
+codegen-units = 1
+lto = true

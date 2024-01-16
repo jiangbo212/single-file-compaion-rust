@@ -1,0 +1,20 @@
+refresh_rate: 30 seconds
+appenders:
+  requests:
+    kind: file
+    path: "single-minio-s3.log"
+    encoder:
+      pattern: "{d} - {m}{n}"
+root:
+  level: info
+  appenders:
+    - requests
+
+loggers:
+  app::backend::db:
+    level: info
+  app::requests:
+    level: info
+    appenders:
+      - requests
+    additive: false

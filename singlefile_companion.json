@@ -1,0 +1,11 @@
+{
+    "name": "singlefile_companion",
+    "description": "SingleFile Companion",
+    "path": "single_file_companion_rust.exe",
+    "type": "stdio",
+    "allowed_origins": [
+        "chrome-extension://mpiodijhokgodhhofbcjdecpffjipkle/",
+        "chrome-extension://efnbkdcfmcmnhlkaijjjmhjjgladedno/",
+        "chrome-extension://pfocgciignlhlijcdpkbhmioobagfpmd/"
+    ]
+}

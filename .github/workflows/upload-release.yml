@@ -1,0 +1,71 @@
+name: upload-release
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  win-build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --release
+    - name: Upload single_file_companion_rust.exe
+      uses: actions/upload-artifact@v3
+      with:
+          name: single_file_companion_rust.exe
+          path: target/release/single_file_companion_rust.exe
+
+  ubuntu-build:
+
+    needs: ["win-build"]
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download single_file_companion_rust.exe
+        uses: actions/download-artifact@v3
+        with:
+            name: single_file_companion_rust.exe
+      - name: zip win exe
+        shell: bash
+        run: mkdir temp-zip && cd temp-zip && cp ../singlefile_companion.json . && cp ../.env . && cp ../single_file_companion_rust.exe . && cp ../log4rs.yaml . && wget https://raw.githubusercontent.com/gildas-lormeau/single-file-companion/main/win/chrome/install.bat && wget https://raw.githubusercontent.com/gildas-lormeau/single-file-companion/main/win/chrome/uninstall.bat && zip -q -r single-file-compaion-rust-win.zip ./ && cd ../
+      - name: Upload win binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          release_name: Release ${{ github.ref }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: temp-zip/single-file-compaion-rust-win.zip
+          asset_name: single-file-compaion-rust-win.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  mac-build:
+
+    permissions: write-all
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --release
+      - name: zip mac
+        shell: bash
+        run: mkdir temp-zip1 && cd temp-zip1 && cp ../singlefile_companion.json . && cp ../.env . && cp ../target/release/single_file_companion_rust . && cp ../log4rs.yaml . && cp ../config/mac/install.sh . && cp ../config/mac/uninstall.sh . && zip -q -r single-file-compaion-rust-mac.zip ./ && cd ../
+      - name: Upload linux binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          release_name: Release ${{ github.ref }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: temp-zip1/single-file-compaion-rust-mac.zip
+          asset_name: single-file-compaion-rust-mac.zip
+          tag: ${{ github.ref }}
+          overwrite: true
